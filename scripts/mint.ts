@@ -6,18 +6,13 @@ import {
   Interactor,
   SUI_CLIENT,
   getKeyPairFromPvtKey,
-  readJSONFile,
+  TARGET_DEPLOYMENT,
   sleep,
 } from "./utils";
 
 async function main() {
-  const deployment = readJSONFile("./deployment.json");
   const admin = getKeyPairFromPvtKey(ENV.DEPLOYER_KEY, ENV.WALLET_SCHEME);
-  const interactor = new Interactor(
-    SUI_CLIENT,
-    deployment[ENV.DEPLOY_ON],
-    admin
-  );
+  const interactor = new Interactor(SUI_CLIENT, TARGET_DEPLOYMENT, admin);
 
   const coinsToMint = 50;
 

@@ -10,6 +10,13 @@ module bluefin_coin::coin {
     /// and has no fields. The full type of the coin defined by this module will be `COIN<TUSDC>`.
     struct COIN has drop {}
 
+
+    /// Maximum supply of BLUE coins that will ever be in circulation (1 billion)
+    const MAX_SUPPLY: u64 = 1_000_000_000_000_000_000;
+
+    /// Triggered when the more coins than max supply are attempted to be minted
+    const EMaxSupplyReached: u64 = 1;
+    
     /// Register the BLUE currency to acquire its `TreasuryCap`. Because
     /// this is a module initializer, it ensures the currency only gets
     /// registered once.
@@ -32,6 +39,10 @@ module bluefin_coin::coin {
     public entry fun mint(
         treasury_cap: &mut TreasuryCap<COIN>, amount: u64, recipient: address, ctx: &mut TxContext
     ) {
+        // The total supply can never be > max supply
+        let total_supply = coin::total_supply(treasury_cap);
+        assert!(total_supply + amount <= MAX_SUPPLY, EMaxSupplyReached);
+
         coin::mint_and_transfer(treasury_cap, amount, recipient, ctx)
     }
 

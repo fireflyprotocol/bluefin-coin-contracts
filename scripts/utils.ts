@@ -17,7 +17,7 @@ import BigNumber from "bignumber.js";
 
 config({ path: ".env" });
 
-const BLUE_TOKEN_DECIMALS = 9;
+export const BLUE_TOKEN_DECIMALS = 9;
 
 export type DeployOn = "localnet" | "mainnet" | "testnet";
 export type BigNumberable = BigNumber | number | string;
@@ -44,6 +44,9 @@ export const ENV = {
   // defaults wallet scheme to secp256k1
   WALLET_SCHEME: (process.env.WALLET_SCHEME || "Secp256k1") as SignatureScheme,
 };
+
+export const DEPLOYMENT = readJSONFile("./deployment.json");
+export const TARGET_DEPLOYMENT = DEPLOYMENT[ENV.DEPLOY_ON];
 
 export const SUI_CLIENT = new SuiClient({
   url:
