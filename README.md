@@ -1,4 +1,10 @@
-# Bluefin Coin
+<div align="center">
+  <img height="100x" src="https://bluefin.io/images/bluefin-logo.svg" />
+
+  <h1 style="margin-top:20px;">Bluefin Coin</h1>
+
+</div>
+
 Repo containing bluefin's coin contract for Sui blockchain. 
 
 ### How To?

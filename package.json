@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "ts-node ./scripts/build.ts",
-    "deploy": "ts-node ./scripts/deploy.ts"
+    "deploy": "ts-node ./scripts/deploy.ts",
+    "mint": "ts-node ./scripts/mint.ts",
+    "burn": "ts-node ./scripts/burn.ts"
   },
   "author": "yameen@seed.im",
   "license": "ISC",
