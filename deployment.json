@@ -1,0 +1,14 @@
+{
+  "localnet": {
+    "TreasuryCap": "0x1e4ca4cad7c2cc4fa8506e8742301c53bc50f4940aebf2b63a523cf224d43e83",
+    "CoinMetadata": "0x97892b9572a9a3d2e542103fbbb03ed2bd50a832cfb682661aa458fdb0d2777f",
+    "Package": "0xb115809ff9727a85aadb78c5e9cfc8640d281cba14375a2e35f33643af571b8c",
+    "UpgradeCap": "0xeda11ac9449444ab0a754497944b07e232d7fc37887f9530d69d42719f71142f"
+  },
+  "testnet": {
+    "Package": "0x42208a291d9c1daeec79c8a0b8896f18a2d183f350b29fd875c05bf3c0695c03",
+    "TreasuryCap": "0x5c3ddabaa1d53e05d03233256bfe803b6092de1e4ac44e612e7adcf3a30b981f",
+    "CoinMetadata": "0x7c27bc1647ff026ffec76a2948749d15d5be9e125610d62bf30dbbf91b500900",
+    "UpgradeCap": "0xd21268cc3b2eaea225d05e0d259de7540a5daf4b607e5b6f9181d120e5d33d98"
+  }
+}
