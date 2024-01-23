@@ -173,7 +173,7 @@ export class Interactor {
         txb.pure(toBigNumberStr(amount, BLUE_TOKEN_DECIMALS)),
         txb.pure(to || this.signer.toSuiAddress()),
       ],
-      target: `${this.deployment.Package}::coin::mint`,
+      target: `${this.deployment.Package}::blue::mint`,
     });
 
     txb.setSender(this.signer.toSuiAddress());
@@ -200,7 +200,7 @@ export class Interactor {
         txb.object(this.deployment.TreasuryCap),
         txb.object(coin.coinObjectId),
       ],
-      target: `${this.deployment.Package}::coin::burn`,
+      target: `${this.deployment.Package}::blue::burn`,
     });
 
     txb.setSender(this.signer.toSuiAddress());
@@ -313,7 +313,7 @@ export class Interactor {
 
   /// formulates the supported coin type
   getCoinType(): string {
-    return `${this.deployment.Package}::coin::COIN`;
+    return `${this.deployment.Package}::blue::BLUE`;
   }
 }
 

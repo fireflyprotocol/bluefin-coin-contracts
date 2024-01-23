@@ -1,5 +1,5 @@
 
-module bluefin_coin::coin {
+module bluefin_coin::blue {
 
     use std::option;
     use sui::coin::{Self, Coin, TreasuryCap};
@@ -7,8 +7,8 @@ module bluefin_coin::coin {
     use sui::tx_context::{Self, TxContext};
 
     /// Name of the coin. By convention, this type has the same name as its parent module
-    /// and has no fields. The full type of the coin defined by this module will be `COIN<TUSDC>`.
-    struct COIN has drop {}
+    /// and has no fields
+    struct BLUE has drop {}
 
 
     /// Maximum supply of BLUE coins that will ever be in circulation (1 billion)
@@ -20,9 +20,9 @@ module bluefin_coin::coin {
     /// Register the BLUE currency to acquire its `TreasuryCap`. Because
     /// this is a module initializer, it ensures the currency only gets
     /// registered once.
-    fun init(witness: COIN, ctx: &mut TxContext) {
+    fun init(witness: BLUE, ctx: &mut TxContext) {
         // Get a treasury cap for the coin and give it to the transaction sender
-        let (treasury_cap, metadata) = coin::create_currency<COIN>(
+        let (treasury_cap, metadata) = coin::create_currency<BLUE>(
             witness, 
             9, 
             b"BLUE", // symbol 
@@ -37,7 +37,7 @@ module bluefin_coin::coin {
 
     /// Manager can mint new coins
     public entry fun mint(
-        treasury_cap: &mut TreasuryCap<COIN>, amount: u64, recipient: address, ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BLUE>, amount: u64, recipient: address, ctx: &mut TxContext
     ) {
         // The total supply can never be > max supply
         let total_supply = coin::total_supply(treasury_cap);
@@ -47,7 +47,7 @@ module bluefin_coin::coin {
     }
 
     /// Manager can burn coins
-    public entry fun burn(treasury_cap: &mut TreasuryCap<COIN>, coin: Coin<COIN>) {
+    public entry fun burn(treasury_cap: &mut TreasuryCap<BLUE>, coin: Coin<BLUE>) {
         coin::burn(treasury_cap, coin);
     }
 
