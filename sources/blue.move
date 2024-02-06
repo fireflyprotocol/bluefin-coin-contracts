@@ -27,7 +27,7 @@ module bluefin_coin::blue {
             9, 
             b"BLUE", // symbol 
             b"Bluefin Coin", // name
-            b"Bluefin foundation coin used earned by trading/staking on the platform and used to partake in governance proposals", 
+            b"Bluefin foundation coin earned by trading/staking on the platform and used to partake in governance proposals", 
             option::none(), // url
             ctx
             );
