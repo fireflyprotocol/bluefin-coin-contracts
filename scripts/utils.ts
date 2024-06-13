@@ -274,7 +274,7 @@ export class Interactor {
   ): Promise<CoinStruct> {
     address = address || this.signer.getPublicKey().toSuiAddress();
     // get all usdc coins
-    const coins = await this.getBLUECoins();
+    const coins = await this.getBLUECoins(address);
 
     for (const coin of coins.data) {
       if (
@@ -296,7 +296,7 @@ export class Interactor {
   ): Promise<CoinStruct> {
     address = address || this.signer.getPublicKey().toSuiAddress();
     // get all usdc coins
-    const coins = await this.getBLUECoins();
+    const coins = await this.getBLUECoins(address);
 
     for (const coin of coins.data) {
       if (
