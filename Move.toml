@@ -1,6 +1,7 @@
 [package]
 name = "bluefin_coin"
 version = "0.0.1"
+published-at = "0xbcec51c81e1381ac70f5d3124ccb5920e1964bd602bd07e03696613d941d595c"
 
 [dependencies]
 [dependencies.Sui]
