@@ -1,4 +1,3 @@
-import { config } from "dotenv";
 import { SignatureScheme, Keypair } from "@mysten/sui.js/cryptography";
 import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
 import { Secp256k1Keypair } from "@mysten/sui.js/keypairs/secp256k1";
@@ -15,11 +14,36 @@ import {
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import BigNumber from "bignumber.js";
 
+import { config } from "dotenv";
+
 config({ path: ".env" });
+
+export const ENV = {
+  DEPLOY_ON: process.env.DEPLOY_ON as DeployOn,
+  DEPLOYER_KEY: process.env.DEPLOYER_KEY || "0x",
+  // defaults wallet scheme to secp256k1
+  WALLET_SCHEME: (process.env.WALLET_SCHEME || "Secp256k1") as SignatureScheme,
+};
+
+export const SUI_CLIENT = new SuiClient({
+  url:
+    ENV.DEPLOY_ON == "mainnet"
+      ? "https://fullnode.mainnet.sui.io:443"
+      : ENV.DEPLOY_ON == "testnet"
+      ? "https://fullnode.testnet.sui.io:443"
+      : ENV.DEPLOY_ON == "devnet"
+      ? "https://fullnode.devnet.sui.io:443"
+      : "http://0.0.0.0:9000",
+});
 
 export const BLUE_TOKEN_DECIMALS = 9;
 
-export type DeployOn = "localnet" | "mainnet" | "testnet";
+export const DEPLOYMENT = readJSONFile("./deployment.json");
+export const TARGET_DEPLOYMENT = DEPLOYMENT[ENV.DEPLOY_ON];
+
+export const ADMIN = getKeyPairFromPvtKey(ENV.DEPLOYER_KEY, ENV.WALLET_SCHEME);
+
+export type DeployOn = "localnet" | "mainnet" | "testnet" | "devnet";
 export type BigNumberable = BigNumber | number | string;
 
 export function toBigNumber(val: BigNumberable, base: number): BigNumber {
@@ -37,25 +61,6 @@ export function toBaseNumber(
 ): number {
   return Number(new BigNumber(val).shiftedBy(-base).toFixed(decimals));
 }
-
-export const ENV = {
-  DEPLOY_ON: process.env.DEPLOY_ON as DeployOn,
-  DEPLOYER_KEY: process.env.DEPLOYER_KEY || "0x",
-  // defaults wallet scheme to secp256k1
-  WALLET_SCHEME: (process.env.WALLET_SCHEME || "Secp256k1") as SignatureScheme,
-};
-
-export const DEPLOYMENT = readJSONFile("./deployment.json");
-export const TARGET_DEPLOYMENT = DEPLOYMENT[ENV.DEPLOY_ON];
-
-export const SUI_CLIENT = new SuiClient({
-  url:
-    ENV.DEPLOY_ON == "mainnet"
-      ? "https://fullnode.mainnet.sui.io:443"
-      : ENV.DEPLOY_ON == "testnet"
-      ? "https://fullnode.testnet.sui.io:443"
-      : "http://0.0.0.0:9000",
-});
 
 /// converts private key into KeyPair
 export function getKeyPairFromPvtKey(
@@ -133,9 +138,13 @@ export function getCreatedObjectsIDs(
 }
 
 export function readJSONFile(filePath: string) {
-  return fs.existsSync(filePath)
-    ? JSON.parse(fs.readFileSync(filePath).toString())
-    : {};
+  try {
+    return fs.existsSync(filePath)
+      ? JSON.parse(fs.readFileSync(filePath).toString())
+      : {};
+  } catch (e) {
+    return {};
+  }
 }
 
 export function writeJSONFile(filePath: string, content: JSON) {
@@ -313,10 +322,12 @@ export class Interactor {
 
   /// formulates the supported coin type
   getCoinType(): string {
-    return `${this.deployment.Package}::blue::BLUE`;
+    return `${this.deployment.BasePackage}::blue::BLUE`;
   }
 }
 
 export async function sleep(timeInMs: number) {
   await new Promise((resolve) => setTimeout(resolve, timeInMs));
 }
+
+export const INTERACTOR = new Interactor(SUI_CLIENT, TARGET_DEPLOYMENT, ADMIN);

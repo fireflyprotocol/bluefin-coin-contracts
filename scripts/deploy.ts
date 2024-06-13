@@ -5,19 +5,16 @@ import path from "path";
 import { execSync } from "child_process";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import {
-  ENV,
   getCreatedObjectsIDs,
-  getKeyPairFromPvtKey,
   readJSONFile,
   signAndExecuteTxBlock,
   writeJSONFile,
 } from "./utils";
+import { ADMIN, ENV } from "./utils";
 
 async function main() {
-  const deployer = getKeyPairFromPvtKey(ENV.DEPLOYER_KEY, ENV.WALLET_SCHEME);
-  const deployerAddress = deployer.getPublicKey().toSuiAddress();
   console.log(`Deploying to: ${ENV.DEPLOY_ON}`);
-  console.log(`Deployer: ${deployerAddress}`);
+  console.log(`Deployer: ${ADMIN.toSuiAddress()}`);
 
   const pkgPath = path.join(path.resolve(__dirname), "../");
   const { modules, dependencies } = JSON.parse(
@@ -27,11 +24,14 @@ async function main() {
   );
   const tx = new TransactionBlock();
   const [upgradeCap] = tx.publish({ modules, dependencies });
-  tx.transferObjects([upgradeCap], tx.pure(deployerAddress));
+  tx.transferObjects([upgradeCap], tx.pure(ADMIN.toSuiAddress()));
   console.log("Deploying");
-  let result = await signAndExecuteTxBlock(tx, deployer);
+  let result = await signAndExecuteTxBlock(tx, ADMIN);
   result.objectChanges;
   const objects = getCreatedObjectsIDs(result);
+
+  objects["BasePackage"] = objects["Package"]; // always store the address of base package separately
+
   console.dir(objects, null);
 
   // update deployment file

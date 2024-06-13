@@ -8,6 +8,7 @@
     "deploy": "ts-node ./scripts/deploy.ts",
     "mint": "ts-node ./scripts/mint.ts",
     "burn": "ts-node ./scripts/burn.ts",
+    "upgrade-pkg": "ts-node ./scripts/upgrade.ts",
     "coin-info": "ts-node ./scripts/coin-info.ts"
   },
   "author": "yameen@seed.im",
