@@ -1,0 +1,9 @@
+{
+  "testnet": {
+    "UpgradeCap": "0xa69899567cf10f4a30cb5b76a639ee07a3ad4bdba4bfbc464ea1526f17854da5",
+    "CoinMetadata": "0x57f09935ad594290a048406bf41a9c6e53d1146e01cee458155ad2c16d080fb5",
+    "TreasuryCap": "0xf735f09787b9f4e5da7f7725fd980e3b3d07ecffb5521bf08bb5d922c3e423c5",
+    "Package": "0x0a04404827683b5ca5974f55a4f4a650755ef3289f202fb8f20551ae2d86dec6",
+    "BasePackage": "0x0a04404827683b5ca5974f55a4f4a650755ef3289f202fb8f20551ae2d86dec6"
+  }
+}
