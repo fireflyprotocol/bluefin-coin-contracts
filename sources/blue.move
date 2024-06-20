@@ -10,8 +10,7 @@ module bluefin_coin::blue {
     /// Name of the coin. By convention, this type has the same name as its parent module
     /// and has no fields
     struct BLUE has drop {}
-
-
+    
     /// Maximum supply of BLUE coins that will ever be in circulation (1 billion)
     const MAX_SUPPLY: u64 = 1_000_000_000_000_000_000;
 
@@ -27,13 +26,17 @@ module bluefin_coin::blue {
             witness, 
             9, 
             b"BLUE", // symbol 
-            b"Bluefin Coin", // name
+            b"Bluefin", // name
             b"Bluefin foundation coin earned by trading on the Bluefin protocol and used to partake in governance proposals", 
-            option::some(url::new_unsafe_from_bytes(b"https://bluefin.io/images/bluefin-logo.svg")), // temporary url
+            option::some(url::new_unsafe_from_bytes(b"https://bluefin.io/images/square.png")), // temporary url
             ctx
             );
+
+
         transfer::public_freeze_object(metadata);
         transfer::public_transfer(treasury_cap, tx_context::sender(ctx))
+
+
     }
 
     /// Manager can mint new coins

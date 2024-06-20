@@ -10,9 +10,10 @@ async function main() {
 
   const coinsToMint = 10_000;
   const sendTo =
-    "0x80c3d285c2fe5ccacd1a2fbc1fc757cbeab5134f1ef1e97803fe653e041c88aa";
+    "0x3a47eb941c01e49a4f68af79d43009771b99d96c92a3ff75a775389e30550adc";
 
   console.log(`Admin address: ${admin.toSuiAddress()}`);
+  console.log(`Sending To: ${sendTo}`);
 
   console.log(
     `Initial BLUE balance: ${await interactor.getBLUEBalance(sendTo)}`
