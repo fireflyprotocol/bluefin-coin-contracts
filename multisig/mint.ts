@@ -1,10 +1,10 @@
+import { MULTI_SIG_WALLET, SUI_CLIENT, TARGET_DEPLOYMENT } from "../env";
 import {
   BLUE_TOKEN_DECIMALS,
-  SUI_CLIENT,
+  createMsTxBytes,
   toBigNumberStr,
-} from "../../scripts/utils";
+} from "../utils";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
-import { TARGET_DEPLOYMENT, createMsTxBytes } from "../utils";
 
 const AMOUNT = 1; // normal number with no extra base decimals
 const RECEIVER =
@@ -22,7 +22,7 @@ async function main() {
     target: `${TARGET_DEPLOYMENT.Package}::blue::mint`,
   });
 
-  const txBytes = await createMsTxBytes(txb);
+  const txBytes = await createMsTxBytes(SUI_CLIENT, txb, MULTI_SIG_WALLET.multisigAddress);
 
   const receipt = await SUI_CLIENT.dryRunTransactionBlock({
     transactionBlock: txBytes,

@@ -1,8 +1,8 @@
 /// Mints the coins and transfers to given address
 /// Assumes that DEPLOYER_KEY in .env file has the TreasuryCap
 
-import { ADMIN, INTERACTOR } from "./utils";
-import { sleep } from "./utils";
+import { ADMIN, INTERACTOR } from "../env";
+import { sleep } from "../utils";
 
 async function main() {
   const coinsToBurn = 75;

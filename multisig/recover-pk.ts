@@ -1,4 +1,4 @@
-import { getKeyPairFromSeed, getPublicKey } from "./utils";
+import { getKeyPairFromSeed, getPublicKey } from "../utils";
 
 const pk = getPublicKey(
   getKeyPairFromSeed(

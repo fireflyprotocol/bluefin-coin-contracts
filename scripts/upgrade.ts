@@ -2,12 +2,11 @@ import path from "path";
 import { execSync } from "child_process";
 import { TransactionBlock, UpgradePolicy } from "@mysten/sui.js/transactions";
 import {
-  ENV,
   readJSONFile,
   signAndExecuteTxBlock,
   writeJSONFile,
-} from "./utils";
-import { ADMIN, SUI_CLIENT, TARGET_DEPLOYMENT } from "./utils";
+} from "../utils";
+import { ADMIN, ENV, SUI_CLIENT, TARGET_DEPLOYMENT } from "../env";
 
 async function main() {
   const pkgPath = path.join(path.resolve(__dirname), "../");
