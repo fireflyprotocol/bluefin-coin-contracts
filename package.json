@@ -9,7 +9,14 @@
     "mint": "ts-node ./scripts/mint.ts",
     "burn": "ts-node ./scripts/burn.ts",
     "upgrade-pkg": "ts-node ./scripts/upgrade.ts",
-    "coin-info": "ts-node ./scripts/coin-info.ts"
+    "coin-info": "ts-node ./scripts/coin-info.ts",
+    "ms:create:wallet": "ts-node ./multisig/create-wallet.ts",
+    "ms:mint:tokens": "ts-node ./multisig/mint.ts",
+    "ms:transfer:admin": "ts-node ./multisig/transfer-admin-cap.ts",
+    "ms:transfer:treasury": "ts-node ./multisig/transfer-treasury-cap.ts",
+    "ms:transfer:tokens": "ts-node ./multisig/transfer-tokens.ts",
+    "ms:sign:tx": "ts-node ./multisig/signTx.ts",
+    "ms:exec:tx": "ts-node ./multisig/execTx.ts"
   },
   "author": "yameen@seed.im",
   "license": "ISC",

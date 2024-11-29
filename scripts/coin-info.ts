@@ -1,5 +1,6 @@
-import { BLUE_TOKEN_DECIMALS, INTERACTOR, SUI_CLIENT } from "./utils";
-import { toBaseNumber } from "./utils";
+import { INTERACTOR, SUI_CLIENT } from "../env";
+import { BLUE_TOKEN_DECIMALS } from "../utils";
+import { toBaseNumber } from "../utils";
 
 async function main() {
   // total supply

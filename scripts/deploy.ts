@@ -9,8 +9,8 @@ import {
   readJSONFile,
   signAndExecuteTxBlock,
   writeJSONFile,
-} from "./utils";
-import { ADMIN, ENV } from "./utils";
+} from "../utils";
+import { ADMIN, ENV, SUI_CLIENT } from "../env";
 
 async function main() {
   console.log(`Deploying to: ${ENV.DEPLOY_ON}`);
@@ -26,7 +26,7 @@ async function main() {
   const [upgradeCap] = tx.publish({ modules, dependencies });
   tx.transferObjects([upgradeCap], tx.pure(ADMIN.toSuiAddress()));
   console.log("Deploying");
-  let result = await signAndExecuteTxBlock(tx, ADMIN);
+  let result = await signAndExecuteTxBlock(tx, ADMIN, SUI_CLIENT);
   result.objectChanges;
   const objects = getCreatedObjectsIDs(result);
 

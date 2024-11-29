@@ -1,9 +1,5 @@
-import {
-  TEST_WALLETS,
-  execCommand,
-  getKeyPairFromSeed,
-  getPublicKey,
-} from "./utils";
+
+import { execCommand, getKeyPairFromSeed, getPublicKey, TEST_WALLETS } from "../utils";
 
 function createMultiSigWallet(adminPKs: string[], threshold: number) {
   if (threshold > adminPKs.length)

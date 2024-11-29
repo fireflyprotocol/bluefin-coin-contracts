@@ -1,6 +1,8 @@
 import { SignatureScheme, Keypair } from "@mysten/sui.js/cryptography";
 import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
 import { Secp256k1Keypair } from "@mysten/sui.js/keypairs/secp256k1";
+import { toB64 } from "@mysten/sui.js/utils";
+
 import fs from "fs";
 
 import {
@@ -13,38 +15,12 @@ import {
 } from "@mysten/sui.js/client";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import BigNumber from "bignumber.js";
+import { execSync } from "child_process";
+import { BigNumberable, MultiSigWallet } from "./types";
 
-import { config } from "dotenv";
-
-config({ path: ".env" });
-
-export const ENV = {
-  DEPLOY_ON: process.env.DEPLOY_ON as DeployOn,
-  DEPLOYER_KEY: process.env.DEPLOYER_KEY || "0x",
-  // defaults wallet scheme to secp256k1
-  WALLET_SCHEME: (process.env.WALLET_SCHEME || "Secp256k1") as SignatureScheme,
-};
-
-export const SUI_CLIENT = new SuiClient({
-  url:
-    ENV.DEPLOY_ON == "mainnet"
-      ? "https://fullnode.mainnet.sui.io:443"
-      : ENV.DEPLOY_ON == "testnet"
-      ? "https://fullnode.testnet.sui.io:443"
-      : ENV.DEPLOY_ON == "devnet"
-      ? "https://fullnode.devnet.sui.io:443"
-      : "http://0.0.0.0:9000",
-});
 
 export const BLUE_TOKEN_DECIMALS = 9;
 
-export const DEPLOYMENT = readJSONFile("./deployment.json");
-export const TARGET_DEPLOYMENT = DEPLOYMENT[ENV.DEPLOY_ON];
-
-export const ADMIN = getKeyPairFromPvtKey(ENV.DEPLOYER_KEY, ENV.WALLET_SCHEME);
-
-export type DeployOn = "localnet" | "mainnet" | "testnet" | "devnet";
-export type BigNumberable = BigNumber | number | string;
 
 export function toBigNumber(val: BigNumberable, base: number): BigNumber {
   return new BigNumber(val).multipliedBy(new BigNumber(1).shiftedBy(base));
@@ -80,11 +56,25 @@ export function getKeyPairFromPvtKey(
   }
 }
 
+export function getKeyPairFromSeed(
+  seed: string,
+  scheme: SignatureScheme = "Secp256k1"
+): Keypair {
+  switch (scheme) {
+    case "ED25519":
+      return Ed25519Keypair.deriveKeypair(seed);
+    case "Secp256k1":
+      return Secp256k1Keypair.deriveKeypair(seed);
+    default:
+      throw new Error("Provided scheme is invalid");
+  }
+}
+
 /// signs and executes the provided sui transaction block
 export async function signAndExecuteTxBlock(
   transactionBlock: TransactionBlock,
   signer: Keypair,
-  suiClient?: SuiClient,
+  client: SuiClient,
   options: SuiTransactionBlockResponseOptions = {
     showObjectChanges: true,
     showEffects: true,
@@ -92,7 +82,6 @@ export async function signAndExecuteTxBlock(
     showInput: true,
   }
 ): Promise<SuiTransactionBlockResponse> {
-  const client = suiClient || SUI_CLIENT;
   transactionBlock.setSenderIfNotSet(signer.toSuiAddress());
   const builtTransactionBlock = await transactionBlock.build({
     client,
@@ -150,6 +139,71 @@ export function readJSONFile(filePath: string) {
 export function writeJSONFile(filePath: string, content: JSON) {
   fs.writeFileSync(filePath, JSON.stringify(content));
 }
+
+
+
+export async function createMsTxBytes(client: SuiClient, txb: TransactionBlock, msWallet: string): Promise<string> {
+  txb.setSender(msWallet);
+  return toB64(
+    await txb.build({ client, onlyTransactionKind: false })
+  );
+}
+
+export function execCommand(command: string) {
+  return execSync(command, { encoding: "utf-8" });
+}
+
+
+export const TEST_WALLETS = [
+  {
+    phrase:
+      "trim bicycle fit ticket penalty basket window tunnel insane orange virtual tennis",
+    address:
+      "0x80c3d285c2fe5ccacd1a2fbc1fc757cbeab5134f1ef1e97803fe653e041c88aa",
+  },
+  {
+    phrase:
+      "trim basket bicycle fit ticket penalty window tunnel insane orange virtual tennis",
+    address:
+      "0x2183df5aaf6366e5445c95fa238fc223dbbda54b7c363680578b435f657f1a29",
+  },
+  {
+    phrase:
+      "trim basket bicycle ticket penalty window tunnel fit insane orange virtual tennis",
+    address:
+      "0xed2bb2ae1330a3abee7794e659add176b827e13532b31074ad01330df2d5c843",
+  },
+];
+
+export function getPublicKey(keyPair: Keypair): string {
+  return keyPair.getPublicKey().toSuiPublicKey();
+}
+
+export function signMultiSigTx(txBytes: string, signer: string) {
+  return JSON.parse(
+    execCommand(`sui keytool --json sign --address ${signer} --data ${txBytes}`)
+  ).suiSignature;
+}
+
+export function combineMSTx(signatures: string[], suiMultiSig: MultiSigWallet) {
+  let pks = "";
+  let weights = "";
+  for (const multisig of suiMultiSig.multisig) {
+    pks += " " + multisig.publicBase64Key;
+    weights += " " + multisig.weight;
+  }
+
+  return JSON.parse(
+    execCommand(
+      `sui keytool --json multi-sig-combine-partial-sig --pks ${pks} --weights ${weights} --threshold ${
+        suiMultiSig.threshold
+      } --sigs ${signatures.join(" ")}`
+    )
+  );
+}
+
+
+
 
 export class Interactor {
   suiClient: SuiClient;
@@ -330,4 +384,3 @@ export async function sleep(timeInMs: number) {
   await new Promise((resolve) => setTimeout(resolve, timeInMs));
 }
 
-export const INTERACTOR = new Interactor(SUI_CLIENT, TARGET_DEPLOYMENT, ADMIN);

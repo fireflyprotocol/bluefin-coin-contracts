@@ -1,12 +1,12 @@
 import path from "path";
-import { ENV, SUI_CLIENT } from "../../scripts/utils";
 import { execSync } from "child_process";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
-import { MS_WALLET, createMsTxBytes } from "../utils";
+import { ENV, MULTI_SIG_WALLET, SUI_CLIENT } from "../env";
+import { createMsTxBytes } from "../utils";
 
 async function main() {
   console.log(`Network: ${ENV.DEPLOY_ON}`);
-  console.log(`Deployer: ${MS_WALLET.multisigAddress}`);
+  console.log(`Deployer: ${MULTI_SIG_WALLET.multisigAddress}`);
 
   const pkgPath = path.join(path.resolve(__dirname), "../");
   const { modules, dependencies } = JSON.parse(
@@ -17,9 +17,9 @@ async function main() {
   const tx = new TransactionBlock();
   const [upgradeCap] = tx.publish({ modules, dependencies });
 
-  tx.transferObjects([upgradeCap], tx.pure(MS_WALLET.multisigAddress));
+  tx.transferObjects([upgradeCap], tx.pure(MULTI_SIG_WALLET.multisigAddress));
 
-  const txBytes = await createMsTxBytes(tx);
+  const txBytes = await createMsTxBytes(SUI_CLIENT, tx, MULTI_SIG_WALLET.multisigAddress);
 
   const receipt = await SUI_CLIENT.dryRunTransactionBlock({
     transactionBlock: txBytes,

@@ -18,8 +18,13 @@ Repo containing bluefin's coin contract for Sui blockchain.
 - Get coin info using `yarn coin-info`
 
 ### Multisig
-The directory contains scripts to execute operations using multi sig wallet and also to create a multisig
-- `create-wallet:` Allows user to create a multisig wallet. Just update the script with public keys of the accounts owning the multisig and update signing threshold before execution
-- `execTx:` Executes a singed multisig transaction. Before executing the tx, we must create its tx bytes and sign them using the multisig owners
-- `signTx:` Allows the owner of multisig to sign the tx bytes
-- `commands:` Scripts/Commands that the multisig wallet can execute. The scripts generate the tx bytes of the commands that must be signed and executed.
+The directory contains scripts for multisig wallets. The table below details the different multi-sig scripts available and who can run those:
+| Script        | Purpose           | Executor                                                   |
+|:-------------|-------------------|------------------------------------------------------------|
+| **ms:mint:tokens**          | Creates mint blue token transaction | Anyone, but must provide address of Treasury cap holding account |
+| **ms:transfer:admin**          | Creates admin transfer transaction | Anyone, but must provide address of current admin account |
+| **ms:transfer:treasury**          | Creates treasury transfer transaction | Anyone, but must provide address of current treasury account |
+| **ms:transfer:tokens**  | Creates transaction to transfer BLUE tokens from multisig wallet to provided address | Any one with multisig and recipient wallet addresses and amounts.
+| **ms:sign:tx**          | Signs multi-sig transaction | A multi-sig key holder account |
+| **ms:exec:tx**          | Executes multi-sig transaction | Any one having multisig transaction and signatures |
+
