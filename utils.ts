@@ -7,6 +7,7 @@ import fs from "fs";
 
 import {
   CoinStruct,
+  DryRunTransactionBlockResponse,
   PaginatedCoins,
   SuiClient,
   SuiObjectChange,
@@ -69,6 +70,32 @@ export function getKeyPairFromSeed(
       throw new Error("Provided scheme is invalid");
   }
 }
+
+
+/**
+   * Executes dry run for the given tx block
+   * @param txBlock Sui transaction block
+   * @param signer The signer that will be singing the Tx
+   * @param suiClient The sui client to be used
+   * @returns Sui Transaction Block Response
+   */
+export async function dryRunTxBlock(
+  txBlock: TransactionBlock,
+  signer: any,
+  client: SuiClient,
+): Promise<DryRunTransactionBlockResponse> {
+  
+  txBlock.setSenderIfNotSet(signer.toSuiAddress());
+
+  const builtBlock = await txBlock.build({
+    client
+  });
+
+  return client.dryRunTransactionBlock({
+      transactionBlock: builtBlock
+  });
+}
+
 
 /// signs and executes the provided sui transaction block
 export async function signAndExecuteTxBlock(
@@ -232,11 +259,11 @@ export class Interactor {
 
     txb.moveCall({
       arguments: [
-        txb.object(this.deployment.TreasuryCap),
+        txb.object(this.deployment.TreasuryCapHolder),
         txb.pure(toBigNumberStr(amount, BLUE_TOKEN_DECIMALS)),
         txb.pure(to || this.signer.toSuiAddress()),
       ],
-      target: `${this.deployment.Package}::blue::mint`,
+      target: `${this.deployment.Package}::blue::mint_tokens`,
     });
 
     txb.setSender(this.signer.toSuiAddress());
@@ -260,10 +287,31 @@ export class Interactor {
 
     txb.moveCall({
       arguments: [
-        txb.object(this.deployment.TreasuryCap),
+        txb.object(this.deployment.TreasuryCapHolder),
         txb.object(coin.coinObjectId),
       ],
-      target: `${this.deployment.Package}::blue::burn`,
+      target: `${this.deployment.Package}::blue::burn_tokens`,
+    });
+
+    txb.setSender(this.signer.toSuiAddress());
+
+    return signAndExecuteTxBlock(txb, this.signer, this.suiClient);
+  }
+
+
+  /**
+   * Allows Treasury Cap holder of the wrap it into `TreasuryCapHolder` object
+   * @returns SuiTransactionBlockResponse
+   */
+  public async wrap(
+  ): Promise<SuiTransactionBlockResponse> {
+    const txb = new TransactionBlock();
+
+    txb.moveCall({
+      arguments: [
+        txb.object(this.deployment.TreasuryCap),
+      ],
+      target: `${this.deployment.Package}::blue::wrap_treasury_cap`,
     });
 
     txb.setSender(this.signer.toSuiAddress());
