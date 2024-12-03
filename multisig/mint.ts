@@ -15,11 +15,11 @@ async function main() {
 
   txb.moveCall({
     arguments: [
-      txb.object(TARGET_DEPLOYMENT.TreasuryCap),
+      txb.object(TARGET_DEPLOYMENT.TreasuryCapHolder),
       txb.pure(toBigNumberStr(AMOUNT, BLUE_TOKEN_DECIMALS)),
       txb.pure(RECEIVER),
     ],
-    target: `${TARGET_DEPLOYMENT.Package}::blue::mint`,
+    target: `${TARGET_DEPLOYMENT.Package}::blue::mint_tokens`,
   });
 
   const txBytes = await createMsTxBytes(SUI_CLIENT, txb, MULTI_SIG_WALLET.multisigAddress);

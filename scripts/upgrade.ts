@@ -37,6 +37,7 @@ async function main() {
     arguments: [cap, receipt],
   });
 
+
   const result = await signAndExecuteTxBlock(tx, ADMIN, SUI_CLIENT, {
     showEffects: true,
     showObjectChanges: true,
