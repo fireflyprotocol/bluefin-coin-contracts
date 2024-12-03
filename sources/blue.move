@@ -41,6 +41,8 @@ module bluefin_coin::blue {
             );
 
         transfer::public_freeze_object(metadata);
+
+        // wrap treasury cap and share
         wrap_treasury_cap(treasury_cap, ctx);
 
     }
