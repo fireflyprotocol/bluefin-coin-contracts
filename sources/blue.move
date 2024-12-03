@@ -36,14 +36,12 @@ module bluefin_coin::blue {
             b"BLUE", // symbol 
             b"Bluefin", // name
             b"Bluefin foundation coin earned by trading on the Bluefin protocol and used to partake in governance proposals", 
-            option::some(url::new_unsafe_from_bytes(b"https://bluefin.io/images/square.png")), // temporary url
+            option::some(url::new_unsafe_from_bytes(b"https://bluefin.io/images/square.png")),
             ctx
             );
 
-
         transfer::public_freeze_object(metadata);
-        transfer::public_transfer(treasury_cap, tx_context::sender(ctx))
-
+        wrap_treasury_cap(treasury_cap, ctx);
 
     }
 
