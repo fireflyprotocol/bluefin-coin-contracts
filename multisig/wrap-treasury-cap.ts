@@ -22,7 +22,10 @@ async function main() {
     transactionBlock: txBytes,
   });
 
+  console.log(JSON.stringify(receipt));
+
   console.log({ txBytes });
+
 
   const holder = getCreatedObjectsIDs(receipt as any);
 
