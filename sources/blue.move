@@ -35,40 +35,23 @@ module bluefin_coin::blue {
             9, 
             b"BLUE", // symbol 
             b"Bluefin", // name
-            b"Bluefin foundation coin earned by trading on the Bluefin protocol and used to partake in governance proposals", 
+            b"BLUE is the native token of Bluefin", 
             option::some(url::new_unsafe_from_bytes(b"https://bluefin.io/images/square.png")),
             ctx
             );
 
-        transfer::public_freeze_object(metadata);
-
-        // wrap treasury cap and share
-        wrap_treasury_cap(treasury_cap, ctx);
-
-    }
-
-    /// Deprecated 
-    public entry fun mint(
-        _: &mut TreasuryCap<BLUE>, _: u64, _: address, _: &mut TxContext
-    ) {
-       abort EDeprecated
-    }
-
-    /// Deprecated 
-    public entry fun burn(_: &mut TreasuryCap<BLUE>, _: Coin<BLUE>) {
-       abort EDeprecated
-    }
-    
-    /// Allows the current `TreasuryCap` owner to wrap it into `TreasuryCapHolder`
-    public entry fun wrap_treasury_cap(treasury: TreasuryCap<BLUE>, ctx: &mut TxContext){
+        // publicly share the meta
+        transfer::public_share_object(metadata);
 
         let holder = TreasuryCapHolder {
             id: object::new(ctx),
-            treasury
+            treasury: treasury_cap
         };
 
         transfer::public_transfer(holder, tx_context::sender(ctx))
+
     }
+
 
     /// Allows the holder of `TreasuryCapHolder` to mint BLUE tokens
     public entry fun mint_tokens(
