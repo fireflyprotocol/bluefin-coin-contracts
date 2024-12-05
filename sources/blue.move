@@ -22,8 +22,6 @@ module bluefin_coin::blue {
 
     /// Triggered when the more coins than max supply are attempted to be minted
     const EMaxSupplyReached: u64 = 1;
-    /// Triggered when invoking the deprecated methods
-    const EDeprecated: u64 = 2;
     
     /// Register the BLUE currency to acquire its `TreasuryCap`. Because
     /// this is a module initializer, it ensures the currency only gets
